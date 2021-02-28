@@ -2,3 +2,4 @@ gym
 torch
 numpy
 rlprop
+tensorboard
