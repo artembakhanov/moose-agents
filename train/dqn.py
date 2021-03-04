@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import gym
-import env  # module init needs to run
+import environment  # module init needs to run
 from prop.algorithms.dqn import Agent
 from prop.net.feed_forward import FeedForward
 
@@ -30,20 +30,30 @@ class FCNet(FeedForward):
 
 
 if __name__ == '__main__':
-    env = gym.make('GooseBaseEnv-v0',)
+    if torch.cuda.is_available():
+        device = "cuda"
+    else:
+        device = "cpu"
+
+    env = gym.make('GooseGreedyEnv-v0',)
     agent = Agent(
         env=env,
         net=FCNet,
-        name="dqn-cnn",
+        name="against-greedy",
         learning_rate=1e-5,
         batch_size=128,
         optimizer=optim.Adam,
         loss_cutoff=0.02,
-        max_std_dev=0.09,
+        max_std_dev=17,
         epsilon_decay=3000,
         double=True,
         target_net_update=500,
         eval_every=500,
-        logdir="logs")
+        logdir="logs",
+        dev=device)
 
     agent.train()
+
+    print("### some stats ###")
+    print(f"games played: {env.stats['games_played']}")
+

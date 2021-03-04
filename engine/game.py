@@ -29,17 +29,15 @@ class Player(object):
 
 class Game(object):
 
-    def __init__(self):
-        self.fields = {
-            A: 1,
-            B: 1,
-            C: 1
-        }
+    def __init__(self, verbose=False):
+        self.fields = [1, 1, 1]
 
         self.players = [
         ]
 
         self.moves = []
+
+        self.verbose = verbose
 
     def move(self, move1, move2):
         if move1 not in FIELDS_SET or move2 not in FIELDS_SET:
@@ -64,6 +62,25 @@ class Game(object):
 
         self.moves.append((move1, move2))
 
+        if self.verbose:
+            positions = {
+                0: "",
+                1: "",
+                2: ""
+            }
+
+            for i in range(2):
+                positions[self.players[i].moves[-1]] += f"{i + 1}"
+            print(f"### Round {len(self.moves)}###")
+            print("Scores")
+            print(f"Player 1 (AI): {self.players[0].score}")
+            print(f"Player 2 (op): {self.players[1].score}")
+            print("Board")
+            print("0\t\t1\t\t2")
+            print("\t\t".join([positions[i] for i in range(3)]))
+            print("\t\t".join([f"{field}" for field in self.fields]))
+            print()
+
     def payoff(self, field):
         return Game.vegetation(self.fields[field]) - 5
 
@@ -71,11 +88,7 @@ class Game(object):
         for player in self.players:
             player.reset()
 
-        self.fields = {
-            A: 1,
-            B: 1,
-            C: 1
-        }
+        self.fields = [1, 1, 1]
 
         self.moves = []
 

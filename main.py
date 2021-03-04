@@ -1,7 +1,8 @@
-from env.base import GooseBaseEnv
+from engine.interactive import InteractiveGame
+from train.dqn import FCNet
 
-test = GooseBaseEnv()
+game = InteractiveGame(verbose=True, net=FCNet)
+game.load_env("GooseHumanEnv-v0")#("GooseHumanEnv-v0") GooseBaseEnv GooseHumanEnv
+game.load_model("against-greedy_15000")
 
-test.step(0)
-test.step(1)
-2 + 2
+game.play()

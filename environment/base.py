@@ -11,13 +11,13 @@ from engine.game import Game, Player, FIELDS, A, B, C, ONE_HOT, FIELDS_SET
 class GooseBaseEnv(gym.Env):
     environment_name = "Goose Environment"
 
-    def __init__(self, rewards=None, rounds_number=100):
+    def __init__(self, rewards=None, rounds_number=100, verbose=False):
         self.action_space = spaces.Discrete(3)
         self.observation_space = spaces.Tuple(
             (spaces.Discrete(3), spaces.Discrete(3), spaces.Box(0, 10, shape=(3,)))
         )
 
-        self._game = Game()
+        self._game = Game(verbose=verbose)
         self._player1 = Player(self._game)
         self._player2 = Player(self._game)
         self._done = False
@@ -25,13 +25,17 @@ class GooseBaseEnv(gym.Env):
 
         if rewards is None:
             rewards = dict(
-                local=0.1,
-                glob=1
+                local=1,
+                glob=0
             )
 
         self.rewards = rewards
 
         self._game.move(choice(FIELDS), choice(FIELDS))
+
+        self.stats = {
+            'games_played': 0
+        }
 
     def step(self, action):
         if self._done:
@@ -49,6 +53,7 @@ class GooseBaseEnv(gym.Env):
 
         if self._done:
             reward += self.rewards["glob"] * (self._player1.score - self._player2.local_score)
+            self.stats['games_played'] += 1
 
         return self.state, reward, self._done, {}
 
