@@ -2,6 +2,6 @@
 #
 # register(
 #     id='TicTacToeBase-v0',
-#     entry_point='env.base:TicTacToeEnv',
+#     entry_point='environment.base:TicTacToeEnv',
 #     reward_threshold=0.7,
 # )
