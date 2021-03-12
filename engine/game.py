@@ -1,4 +1,7 @@
 from math import exp
+from random import choice
+
+import numpy as np
 
 A, B, C = 0, 1, 2
 FIELDS_SET = {A, B, C}
@@ -11,7 +14,7 @@ ONE_HOT = [
 
 
 class Player(object):
-    def __init__(self, game):
+    def __init__(self, game, strategy=None):
         self.score = 0
         self.local_score = 0
         self.moves = []
@@ -20,20 +23,36 @@ class Player(object):
         if len(self._game.players) == 2:
             raise Exception("No more than two players are allowed")
 
+        self._strategy = strategy
+
         self._game.players.append(self)
 
     def reset(self):
         self.score = 0
         self.moves = []
 
+    def move(self):
+        if self._strategy is None or self._strategy == "random":
+            return choice(FIELDS)
+
+        elif self._strategy == "greedy":
+            return np.argmax(self._game.fields)
+
+        elif self._strategy == "random_weighted":
+            payoffs = np.array([Game.vegetation(x) for x in self._game.fields])
+            payoffs /= np.sum(payoffs)
+            return np.random.choice(FIELDS, p=payoffs)
+
 
 class Game(object):
 
-    def __init__(self, verbose=False):
+    def __init__(self, verbose=False, create_players=False):
         self.fields = [1, 1, 1]
 
         self.players = [
         ]
+        if create_players:
+            self.players = [Player(self), Player(self)]
 
         self.moves = []
 

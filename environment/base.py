@@ -57,7 +57,7 @@ class GooseBaseEnv(gym.Env):
 
         return self.state, reward, self._done, {}
 
-    def reset(self):
+    def reset(self, human=False):
         self._done = False
         self._game.reset()
         self._game.move(choice(FIELDS), choice(FIELDS))
